@@ -1,0 +1,116 @@
+\documentclass[11pt, oneside]{article} 
+\usepackage[letterpaper, margin=0.5in]{geometry}        		
+\geometry{letterpaper}
+\usepackage[parfill]{parskip} 
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{qtree}
+\usepackage{makecell}
+
+\usepackage{mathtools}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}%
+\DeclarePairedDelimiter\norm{\lVert}{\rVert}%
+    % \abs & \norm resizes brackets, starred version doesn't
+    \makeatletter
+    \let\oldabs\abs
+    \def\abs{\@ifstar{\oldabs}{\oldabs*}}
+    %
+    \let\oldnorm\norm
+    \def\norm{\@ifstar{\oldnorm}{\oldnorm*}}
+    \makeatother
+    
+\newcommand\tab[1][0.5cm]{\hspace*{#1}}
+
+
+\title{CSC263 - Week 1, Tutorial 1}
+\author{Cristyn Howard}
+\date{Friday, January 12, 2018}
+
+\begin{document}
+\maketitle
+
+\begin{center} 
+\underline{\emph{{\Large Today's topic: Review of running time, proofs of running time.}}} 
+\end{center}
+\vspace{1em}
+
+\begin{itemize}
+\item T(n); worst-case running time; the maximum number of steps the algorithm T takes on an input of size n
+	\begin{itemize}
+	\item t(x); the number of steps taken by the algorithm on \underline{specific input} x
+	\item $T(n) = max\{ t(x) \: \: \mid \: \: \:  \abs{x} = n\}$
+	\end{itemize}
+
+\item $O, \Omega, \Theta$; mathematical concepts that quantify the relations between functions; 
+   	\begin{itemize}
+   	\item adopted by computer scientists to abstractly compare running time of different algorithms, without concern for specific implementation details 
+	\item $O(n^2) = \{1, 2, n^2, 2n^2, n^2+1, ...\}$, (infinite set)
+	\item $\Omega(n^2) = \{ n^2, 2n^2, 4n^3, ...\}$, (infinite set)
+	\item $\Theta(n^2) = O(n^2) \cap \Omega(n^2) = \{n^2, 2n^2, ...\}$, (infinite set)
+    	\end{itemize}
+
+\item $T(n) \in O(g(n)) \iff $ for \underline{every} input of size $n$, T takes \underline{at most} $c\times g(n)$ steps, (where $c \in \mathbb{R}$)
+
+\item $T(n) \in \Omega(g(n)) \iff $ there is \underline{some} input of size $n$ for which T takes \underline{at least} $c\times g(n)$ steps, (where $c \in \mathbb{R}$)
+\vspace{1em}
+
+\item [Ex 1:] 
+	\begin{tabular}{  l | l  } 
+	\makecell[l]{		input: A[1...n] \\ 
+				for $i=1$ to n: \\ 
+				\tab for $j=1$ to n: \\
+				\tab \tab if A[i] != 1, STOP}
+	&	
+	\makecell[l]{	$O(n^2)$ because the max possible iterations of the inner $\&$ outer loop \\
+				result in $n^2$ calls of the fourth line of code, which is in constant time \\
+				\\
+				$\Omega(n^2)$ because $\forall \: \: n, \exists$ array of 1's of size n, \\
+				which will result in runtime of $n^2$ } 
+	\end{tabular}
+\vspace{1em}
+
+\item [Ex 2:] 
+	\begin{tabular}{  l | l  } 
+	\makecell[l]{
+		Bubblesort(A[1...n]): \\
+		last = n, sorted = false; \\
+		while(not sorted): \\
+		\tab sorted = true; \\
+		\tab for j=1 to last-1: \\
+		\tab \tab if (A[j] $>$ A[j+1]): \\
+		\tab \tab \tab swap A[j] $\&$ A[j+1]; \\
+		\tab \tab \tab sorted = false; \\
+		\tab last -= 1; \\ }
+	&	
+	\makecell[l]{ 
+		\underline{Loop Invariant}: at the end of the $i^{th}$ iteration of the while loop, \\
+		A[last+1 ... n] contains the largest elements in A in sorted order \\ \\
+		$T(n) \in O(n^2)$: \\
+		\tab $\bullet$ while loop executes at most n times \\
+		\tab \tab (each loop reduces 'last' by 1; when 'last'=1, sorted set true, \\
+		\tab \tab for loop not executed, while loop stops) \\
+		\tab $\bullet$ inner loop executes at most n-1 times \\
+		\tab $\bullet$ $n (n-1) \approx n^2 $ \\ \\
+		$T(n) \in \Omega(n^2)$: \\
+		\tab $\bullet$ consider reverse sorted array of size n \\
+		\tab $\bullet$ for $1^{st}$ iteration of while loop, for loop does n-1 swaps \\ 
+		\tab $\bullet$ for $i^{th}$ iteration of while loop, for loop does n-i swaps \\ 
+		\tab $\bullet$ total swaps reverse sorted array of size n = $\sum_{i=1}^{n} n-i = \frac{n(n-1)}{2} \in \Theta(n^2)$ \\
+		\tab $\bullet$ thus for every n, $\exists$ an input array for which the number of steps is \\
+		\tab \tab at least $\in \Theta(n^2)$} 
+	\end{tabular}
+
+\end{itemize}
+
+
+
+
+
+
+
+
+
+
+\end{document}  
