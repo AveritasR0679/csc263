@@ -1,0 +1,124 @@
+\documentclass[11pt, oneside]{article} 
+\usepackage[letterpaper, margin=0.5in]{geometry}        		
+\geometry{letterpaper}
+\usepackage[parfill]{parskip} 
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{qtree}
+\usepackage{mathtools}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+
+
+\title{CSC236 - Week 1, Lecture 2}
+\author{Cristyn Howard}
+\date{January 10, 2018}
+
+\begin{document}
+\maketitle
+
+
+\begin{itemize}
+	\item \underline{abstract data type (ADT)} - an object and its operations
+	
+	\item \underline{data structure} - specific implementation of some ADT
+	\newline
+	
+	\item One example of an ADT is a \underline{Priority Queue (PQ)}.
+		\begin{itemize}
+		\item \underline{object:} maintains a set S of elements with keys that can be compared
+		
+		\item \underline{operations:}
+			\begin{itemize}
+			\item INSERT(x, S): insert item x into set S such that the order is maintained
+			
+			\item MAX(S): return a value with the maximum priority
+			
+			\item EXTRACTMAX(S): find an element with max priority and remove it from the set
+			\end{itemize}
+		\end{itemize}
+		
+	\item PQ application example: might be used by an operating system to organize processes that need to be run
+	
+	\item Some data structures for PQs:
+		\begin{itemize}
+		\item \begin{tabular}{ |r|c|c| } 
+			\hline
+			 & \multicolumn{2}{|c|}{Worst-case run time of:} \\
+			Data Structure & INSERT & EXTRACTMAX \\
+			\hline
+			unsorted linked list 	&	 $O(1)$	 	&	 $O(n)$		\\ 
+			sorted linked list 	&	 $O(n)$ 		& 	$O(1)$ 		\\ 
+	 		heaps 			&	 $O(logn)$ 	& 	$O(logn)$ 	\\ 
+			\hline
+			\end{tabular}
+			
+		\item Note that heaps are superior! So what are they, and how do they work?
+		\vspace{0.5cm}
+		
+		\item [Recall:] Complete Binary Tree (CBT): start at the leftmost node, every node has at most two children, fill every level before moving to the next
+		
+		\item [Recall:] Height of binary tree: length of longest path from the root to any leaf of the tree. 
+		
+		\item For CBT of size n, height = $\floor*{log_2 n}$
+		\end{itemize}
+	\vspace{0.5cm}
+	
+	\item \underline{heaps}: store set S of size n in an n-node complete binary tree
+		\begin{itemize}
+		\item elements in a heap are stored such that the priority of any node is greater than the priority of its children
+		
+		\item heaps for set S are not unique, i.e. there are many valid heap configurations of set S
+		
+		\item Example: $S = \{3, 4, 5, 7, 7, 9, 9, 12, 17\}$, A heap containing s:
+			\Tree[.17	[.9 	[.7	[.3 ]
+             					[.4 ]]
+             				[.7 ]]
+      				[.12 	[.9 ]
+						[.5 ]]]
+		\end{itemize}
+		
+	\item In a computer, heaps are stored in a (1-indexed) array such that the elements represent the nodes of the heap ordered from top-to-bottom, left-to-right.
+	\begin{itemize}
+		\item An array storing our heap of S: \begin{tabular}{ l l l l l l l l l l} 
+			Index: & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 \\
+			\hline
+			Value: \vline& 17 \vline& 9 \vline& 12 \vline& 7 \vline& 7 \vline& 9 \vline& 5 \vline& 3 \vline& 4 \vline  \\ 
+			\hline
+			\end{tabular}
+	\end{itemize}
+	
+	\item How do we relate parents to children (and vice versa) when the heap is stored in an array?
+		\begin{itemize}
+		\item \begin{tabular}{ |c|c| } 
+			\hline
+			Parents to Children & Children to Parents \\
+			\hline
+			right child index = parent index $\times$ 2	& parent index = $\lfloor$ child index / 2 $\rfloor$ \\ 
+			\hline
+			left child index = (parent index $\times$ 2) + 1	& \\ 
+			\hline
+			\end{tabular}
+		\end{itemize}
+	
+	\item How are the PQ operations implemented on a heap stored as an array?
+		\begin{itemize}
+		\item INSERT(): (A) add new element to last space in array; (B) get parent index, get parent value; (C) if parent value is smaller than new element value, swap element locations, go to B.
+			\begin{itemize}
+			\item \underline{worst case run time of insert}: compare $\&$ swap take constant time, the upper bound on the number of swaps is the height of the tree, thus Insert $\in \Theta(logn)$.
+				\begin{itemize}
+				\item $O(logn)$: every insert takes \underline{at most} $c\times logn$ steps, for some constant $c$.
+				\item $\Omega(logn): \exists $ some element for which insert takes \underline{at least} $c\times logn$ steps, (e.g. $x > \textit{root}).$
+				\end{itemize}
+
+			\end{itemize}
+
+		\item MAX(): $\Theta(1)$, get first element of the array
+		\item EXTRACTMAX(): (A) swap first $\&$ last elements of the array; (B) return last element $\&$ reduce heap size by one; (C) compare first element value to values of both children, swap element with larger of two children; (D) continue until element is larger than both children, or until the indices of both children are greater than heap size (i.e. element has no children)
+			\begin{itemize}
+			\item $\Theta(logn)$ for reasons similar to insert
+			\end{itemize}
+		\item SORTING: extract max until all elements have been removed from the array, $\Theta(n\times logn)$
+		\end{itemize}
+\end{itemize}
+\end{document}  
