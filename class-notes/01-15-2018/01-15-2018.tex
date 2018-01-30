@@ -1,0 +1,113 @@
+\documentclass[12pt]{article} 
+\usepackage[letterpaper, margin=0.5in]{geometry}        		
+\geometry{letterpaper}
+\usepackage[parfill]{parskip} 
+\usepackage{framed}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{qtree}
+\usepackage{makecell}
+
+\usepackage{mathtools}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}%
+\DeclarePairedDelimiter\norm{\lVert}{\rVert}%
+    % \abs & \norm resizes brackets, starred version doesn't
+    \makeatletter
+    \let\oldabs\abs
+    \def\abs{\@ifstar{\oldabs}{\oldabs*}}
+    %
+    \let\oldnorm\norm
+    \def\norm{\@ifstar{\oldnorm}{\oldnorm*}}
+    \makeatother
+    
+\newcommand\tab[1][0.25cm]{\hspace*{#1}}
+\newcommand\imp{\rightarrow}
+\newcommand\thfr{\tab \therefore \tab}
+\newcommand\sameas{\tab \equiv \tab}
+
+\title{CSC263 - Week 2, Lecture 1}
+\author{Cristyn Howard}
+\date{Monday, January 15, 2018}
+
+\begin{document}
+\maketitle
+
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|c|}
+\hline
+ADT & Data Structure & INSERT & MIN & EXTRACTMIN & MERGE	\\
+\hline
+Priority Queues & Heaps & yes & yes & yes & NO \\
+\hline
+Mergeable Priority Queues & Binomial Queues & $O(\log{n})$ & $O(\log{n})$ & $O(\log{n})$ & $O(\log{n})$ \\
+\hline
+\end{tabular}
+\end{center}
+\vspace{0.4cm}
+
+If a CPU has two cores, each with a Priority Queue of tasks to perform, it might need to merge them. This is not easy to accomplish with Heaps, however it is possible with...
+\vspace{0.4cm}
+
+\underline{Binomial Heaps}
+\begin{itemize}
+\item [] $S_k \: tree: \tab S_0 = \bigcirc$ \newline
+	\tab[1.75cm] $S_k$ = take two $S_{k-1}$ trees, make the roof of one the parent of the root of the other.
+	
+\item [] \begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+$S_0$ & $S_1$ & $S_2$ & $S_3$ & $S_4$ \\
+\hline
+\makecell{$\bigcirc$} & 
+\makecell{ \Tree[.$\bigcirc$  $\bigcirc$  ] } & 
+\makecell{ \Tree[.$\bigcirc$ [.$\bigcirc$ $\bigcirc$ ] $\bigcirc$ ] } & 
+\makecell{\Tree[.$\bigcirc$ [.$\bigcirc$ [.$\bigcirc$ $\bigcirc$ ] $\bigcirc$ ][.$\bigcirc$ $\bigcirc$ ] $\bigcirc$ ] } & 
+\makecell{\Tree[.$\bigcirc$ [.$\bigcirc$ [.$\bigcirc$ [.$\bigcirc$ $\bigcirc$ ] $\bigcirc$ ][.$\bigcirc$ $\bigcirc$ ] $\bigcirc$ ] [.$\bigcirc$ [.$\bigcirc$ $\bigcirc$ ] $\bigcirc$ ][.$\bigcirc$ $\bigcirc$ ] $\bigcirc$ ]}  \\
+\hline
+\end{tabular}
+\end{center}
+
+\item Each $S_k$ tree is attached to $\{S_0, S_1, ... , S_{k-1}\}$, has $2^k$ total nodes, and $\binom{k}{d}$ nodes at depth d.
+\end{itemize} \vspace{0.4cm}
+
+A \underline{binomial forest} of size $m$, denoted $F_m$, is a sequence of $S_k$ trees with increasing k, and a total of $m$ nodes in the entire forest. 
+	\begin{itemize}
+	\item Represent the number $m$ in binary, each 1 digit in the resulting number represents an Sk tree in the forest. \framebox{Ex: $m=7=<1,1,1>_2 = 2^2+2^1+2^0 \thfr F_m = \{ S_2, S_1, S_0\}$ }
+	\item $\alpha(m) =$ number of 1's in the binary representation of m.
+	\item $F_m$ has $\alpha(m)$ trees, and $m-\alpha(m)$ edges.
+	\item Note: a 'forest' is just the structure, it becomes a heap when keys are added.
+	\end{itemize}
+	
+\underline{Min heap} has property that the key of the parent is SMALLER than the key of the children.
+\newpage
+
+Some examples of binary forests with keys that conform to the min heap property: \newline
+
+\begin{center}
+\begin{tabular}{ p{12em} | p{12em}}
+\hline
+$m=7=<1,1,1>_2$ \newline
+$F_m = \{ S_2, S_1, S_0\}$\newline
+$S=\{10, 13, 1, 3, 8, 18, 7\}$	& 
+\Tree[.$3$ [.$7$ $18$ ] $8$ ] \tab
+\Tree[.$1$  $13$  ]  \tab \Tree[.$10$ ] \\
+\hline
+$m=0=<1,0,0,1>_2$ \newline\newline
+$F_m = \{ S_3, S_0\}$\newline\newline
+$S=\{6,1,7,3,4,5,2,2,21\}$	& 
+\Tree[.$1$ [.$3$ [.$7$ $21$ ] $6$ ][.$2$ $5$ ] $4$ ]
+ \tab \Tree[.$2$ ] \\
+\hline
+
+\end{tabular}
+\end{center}
+\vspace{0.4cm}
+These forests must have pointers to allow for navigation between trees and interaction with the data structure. These pointers are NOT edges in the trees. \\ \\
+Each node stores pointers to: parent, left child, right sibling.
+
+
+\end{document}

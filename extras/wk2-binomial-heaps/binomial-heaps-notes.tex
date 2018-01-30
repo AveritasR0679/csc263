@@ -1,0 +1,123 @@
+\documentclass[12pt]{article} 
+\usepackage[letterpaper, margin=0.5in]{geometry}        		
+\geometry{letterpaper}
+\usepackage[parfill]{parskip} 
+\usepackage{framed}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{qtree}
+\usepackage{makecell}
+\usepackage{lmodern}
+\renewcommand*\familydefault{\sfdefault}
+\usepackage{tikz}
+\usetikzlibrary{matrix}
+
+\usepackage{mathtools}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}%
+\DeclarePairedDelimiter\norm{\lVert}{\rVert}%
+    % \abs & \norm resizes brackets, starred version doesn't
+    \makeatletter
+    \let\oldabs\abs
+    \def\abs{\@ifstar{\oldabs}{\oldabs*}}
+    %
+    \let\oldnorm\norm
+    \def\norm{\@ifstar{\oldnorm}{\oldnorm*}}
+    \makeatother
+
+\newcommand\graytag[1]{\text{\textsl{\color{gray}{#1}}}}
+\newcommand\tab[1][0.5cm]{\hspace*{#1}}
+\newcommand\imp{\rightarrow}
+\newcommand\thfr{\tab \therefore \tab}
+\newcommand\sameas{\tab \equiv \tab}
+
+\graphicspath{{../pdf/}{D:\Users\elizabethhoward\Documents\Courses\Current\csc263\extras\wk-2-binomial-heaps\figures}}
+
+\title{CSC263 - Binomial Heaps}
+\author{Cristyn Howard}
+\date{Monday, January 29, 2018}
+
+\begin{document}
+\maketitle
+
+\textbf{Mergeable heaps} support the following operations:
+	\begin{itemize}
+	\item \textbf{MAKE-HEAP() : }creates and returns a new heap with no elements. 
+	\item \textbf{INSERT(H, x) : }inserts node x into heap H.
+	\item \textbf{MINIMUM(H) : }returns a pointer to smallest-keyed node in heap H.
+	\item \textbf{EXTRACT-MIN(H) : }deletes the node from heap H whose key is minimum, returns a pointer to it.
+	\item \textbf{UNION($H_1, H_2$) : }creates and returns a new heap that contains all the nodes of heaps H1 and H2. Heaps H1 and H2 are destroyed by this operation.
+	\item \textbf{*DECREASE-KEY(H, x, k) : }assigns to node x within heap H the new key value k, requires $k \leq x.key$.
+	\item \textbf{*DELETE(H,x) : }deletes node x from heap H.
+	\end{itemize}
+
+When heaps are implemented using binary trees stored in arrays, all of the operations listed except for UNION are in $O(\log{n})$. For this data structure, UNION is performed by concatenating two arrays and running MIN-HEAPIFY over the result, so it is $O(n)$.
+\vspace{0.5cm}
+
+\begin{center}
+\begin{tabular}{|l|c|c|c|}
+\hline
+\textbf{Procedure} &	 \textbf{Binary heap} &  \textbf{Binomial heap} & \textbf{Fibonacci heap} \\
+\hline
+MAKE-HEAP & $\Theta(1)$ & 		$\Theta(1)$ & $\Theta(1)$ \\
+\hline
+INSERT  & 	$\Theta(\log{n})$ & 	$O(\log{n})$ & $\Theta(1)$ \\
+\hline
+MINIMUM  & 	$\Theta(1)$ & 		$O(\log{n})$ & $\Theta(1)$ \\
+\hline
+EXTRACT-MIN  & $\Theta(\log{n})$ & $\Theta(\log{n})$ & $O(\log{n})$ \\
+\hline
+UNION  & 	$\Theta(n)$ & 		$O(\log{n})$ & $\Theta(1)$ \\
+\hline
+DECREASE-KEY  & $\Theta(\log{n})$ & $\Theta(\log{n})$ & $\Theta(1)$ \\
+\hline
+DELETE  & 	$\Theta(\log{n})$ & $\Theta(\log{n})$ &$O(\log{n})$ \\
+\hline
+\end{tabular}
+\end{center}
+\vspace{0.5cm}
+
+*Note: binary, binomial, and fibonacci heaps are all inefficient at performing SEARCH - finding a node with a given key. Thus the procedures DECREASE-KEY and DELETE require a pointer to the node to be deleted to be input.
+
+A binomial heap is a collection of \textbf{binomial trees}.
+
+\textbf{Binomial tree $B_k :$} an ordered tree where:
+	\begin{itemize}
+	\item $B_0$ is a single node
+	\item $B_k$ consists of two $B_{k-1}$ trees linked together such that the root of one is the leftmost child of the roof of the other.
+	\end{itemize}
+	
+\begin{center}
+\includegraphics[totalheight=5cm]{figures/sampletrees.png}
+\vspace{0.5cm}
+
+You can also think of a $B_k$ tree as a collection of $\{B_{k-1}, B_{k-2}, ... , B_1, B_1\}$ attached to a common root node.
+
+\includegraphics[totalheight=5cm]{figures/collection.png}
+\end{center}
+\underline{Properties of Binary Trees}: binomial tree $B_k$ has...
+	\begin{enumerate}
+	\item $2^k$ nodes
+	\item height $k$
+	\item exactly $\binom{k}{i}$ nodes at depth $i \in \{0,1,...,k\}$
+	\item root has degree k, which is greater than that of any other node in B
+	\item maximum degree of any node in an n-node binomial tree is $\log{n}$
+		\begin{itemize}
+		\item [-]\emph{Consider that the number of nodes in the subtree rooted at x decreases by half every time we jump to the leftmost child of x.}
+		\end{itemize}
+
+	\end{enumerate}
+\vspace{0.5cm}
+
+Note: the \textbf{degree} of node x the number of children it has. It is equivalent to the number of edges on the longest path between it and a leaf.
+
+A \textbf{binomial heap} is a binomial forest, a collection of binomial trees, that satisfies the binomial heap properties:
+	\begin{itemize}
+	\item [A)]Each binomial tree in H obeys the min-heap property: the key of a node is greater than or equal to the key of its parent.
+	\item [B)]For any nonnegative integer k, there is at most one binomial tree in H whose root has degree k.
+	\end{itemize}
+
+
+\end{document}

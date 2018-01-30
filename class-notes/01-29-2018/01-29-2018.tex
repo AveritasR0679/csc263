@@ -1,0 +1,125 @@
+\documentclass[12pt]{article} 
+\usepackage[letterpaper, margin=0.5in]{geometry}        		
+\geometry{letterpaper}
+\usepackage[parfill]{parskip} 
+\usepackage{framed}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{qtree}
+\usepackage{makecell}
+\usepackage{lmodern}
+\renewcommand*\familydefault{\sfdefault}
+\usepackage{tikz}
+\usetikzlibrary{matrix}
+
+\usepackage{mathtools}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}%
+\DeclarePairedDelimiter\norm{\lVert}{\rVert}%
+    % \abs & \norm resizes brackets, starred version doesn't
+    \makeatletter
+    \let\oldabs\abs
+    \def\abs{\@ifstar{\oldabs}{\oldabs*}}
+    %
+    \let\oldnorm\norm
+    \def\norm{\@ifstar{\oldnorm}{\oldnorm*}}
+    \makeatother
+
+\newcommand\graytag[1]{\text{\textsl{\color{gray}{#1}}}}
+\newcommand\tab[1][0.5cm]{\hspace*{#1}}
+\newcommand\imp{\rightarrow}
+\newcommand\thfr{\tab \therefore \tab}
+\newcommand\sameas{\tab \equiv \tab}
+
+\title{CSC263 - Week 4, Lecture 1}
+\author{Cristyn Howard}
+\date{Monday, January 29, 2018}
+
+\begin{document}
+\maketitle
+
+\section*{Augmenting Data Structures}
+
+Think of data structures we have learned about in class as tools to solve problems. Sometimes, the data structures we have learned about will not be perfectly suited to the problem you are trying to solve. In that case, we must modify, or \emph{augment} given data structures so suit our needs. Creative problem solving skills are required when choosing how to do this.
+
+\subsection*{Dynamic Order Statistics - CLRS 14}
+
+\begin{itemize}
+\item [Given:] set of distinct keys S  \tab[7.5cm] \graytag{Let $S = \{5,15,27,30,56\}$.}
+\item [Do:] INSERT, DELETE, SEARCH
+\item [\graytag{new}] SELECT(k): return $k^{th}$ key in sorted order of keys
+\item [\graytag{new}] RANK(x): return position of $x$ in sorted order of keys
+\end{itemize}
+\vspace{0.5cm}
+
+\begin{center}
+\begin{tabular}{ r c }
+
+\makecell[l]{Storing S in an AVL tree, this would allow us to perform INSERT, DELETE, \\
+		and SEARCH, but it is not immediately obvious how to perform RANK and \\
+		SELECT. What are some modifications we can make to an AVL tree that \\
+		would allow us to implement these methods?} 
+& 	
+\makecell{\Tree[.$15_+$ $5_{\:0}$ [.$30_{\:0}$ $27_{\:0}$ $56_{\:0}$ ] ]} 
+\\ & \\
+ 
+\makecell[l]{\textbf{TRY:} storing rank in every node. \\
+		This allows us to do RANK $\&$ SELECT easily. \\
+		However now INSERT (sometimes) requires us to update the ranking \\
+		of all $n$ nodes in the heap, so it is $O(n)$, and thus inefficient.  }
+&
+\makecell{\Tree[.$\substack{ \\ 15_+ \\ \text{rank: } 2}$ $\substack{ \\ 5_{\:0} \\ \text{rank: } 1}$ [.$\substack{ \\ 30_{\:0} \\ \text{rank: } 4}$ $\substack{ \\ 27_{\:0} \\ \text{rank: } 3}$ $\substack{ \\ 56_{\:0} \\ \text{rank: } 5}$ ] ]} \\ & \\
+
+\makecell[l]{\textbf{TRY:} at each node $x$, store the size of the subtree rooted at $x$. \\
+		\underline{Property}: x.size = x.left.size + x.right.size + 1 \\ \\
+		Can we use this information to implement RANK and SELECT while \\
+		preserving the efficiency of INSERT, DELETE, and SEARCH? \\
+		Consider the relative ranking of the nodes contained in the subtree \\
+		rooted at x. \\
+		x.rRank = x.left.size + 1, as the $i$ nodes in x.left fill rank 1 through $i$. }
+&
+\makecell{\Tree[.$\substack{ \\ 15_+ \\ \text{size: } 5}$ $\substack{ \\ 5_{\:0} \\ \text{size: } 1}$ [.$\substack{ \\ 30_{\:0} \\ \text{size: } 3}$ $\substack{ \\ 27_{\:0} \\ \text{size: } 1}$ $\substack{ \\ 56_{\:0} \\ \text{size: } 1}$ ] ]} 
+ \\
+ 
+\end{tabular}
+\end{center}
+
+\underline{Implementing SELECT(T, k)}:
+\begin{itemize}
+\item rootRank = T.root.left.size + 1;
+\item if rootRank = k: return T.root
+\item if rootRank $>$ k: SELECT(T.root.left, k) \tab[1cm] \graytag{Look for $k^{th}$ element in left subtree.}
+\item if rootRank $<$ k: SELECT(T.root.right, $k-\text{rootRank}$) 
+\item \emph{This recursive algorithm is limited in it's number of constant time calls by the height of the tree, thus it is $O(\log{n})$.}
+\end{itemize}
+
+\underline{Implementing Rank(T, x)}: 
+\begin{itemize}
+\item \emph{Note that the explicit code for this algorithm is available in the textbook and may be added later.}
+\item First, find the rank of x in the smallest tree in which it is contained.
+\item Then move up through ancestor nodes to the root, making the following adjustments:
+	\begin{itemize}
+	\item When moving from LEFT SUBTREE to parent: 
+		\begin{itemize}
+		\item rank stays the same
+		\end{itemize}
+
+	\item When moving from RIGHT SUBTREE to parent:
+		\begin{itemize}
+		\item must add nodes smaller than X in parent's left subtree to rank
+		\end{itemize}
+	\end{itemize}
+\item These operations happen in constant time, and the number of rank alterations that occurs for node x is limited by the height of the tree, so it is $O(\log{n})$.
+\end{itemize}
+\vspace{0.5cm}
+
+INSERT only requires that we update the size of trees once the AVL has finished balancing, which happens in constant time and does not impact the worst-case run time.
+\vspace{0.5cm}
+
+This augmentation is ideal because the information needed to determine the size of a tree is limited to the size of it's subtrees. This means that tree size calculations (and this RANK calculations) is easily accessible given local data.
+
+
+
+\end{document}

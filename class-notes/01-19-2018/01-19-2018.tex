@@ -1,0 +1,109 @@
+\documentclass[12pt]{article} 
+\usepackage[letterpaper, margin=0.5in]{geometry}        		
+\geometry{letterpaper}
+\usepackage[parfill]{parskip} 
+\usepackage{framed}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{qtree}
+\usepackage{makecell}
+\usepackage{lmodern}
+\renewcommand*\familydefault{\sfdefault}
+\usepackage{tikz}
+\usetikzlibrary{matrix}
+
+\usepackage{mathtools}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}%
+\DeclarePairedDelimiter\norm{\lVert}{\rVert}%
+    % \abs & \norm resizes brackets, starred version doesn't
+    \makeatletter
+    \let\oldabs\abs
+    \def\abs{\@ifstar{\oldabs}{\oldabs*}}
+    %
+    \let\oldnorm\norm
+    \def\norm{\@ifstar{\oldnorm}{\oldnorm*}}
+    \makeatother
+
+\newcommand\graytag[1]{\text{\textsl{\color{gray}{#1}}}}
+\newcommand\tab[1][0.5cm]{\hspace*{#1}}
+\newcommand\imp{\rightarrow}
+\newcommand\thfr{\tab \therefore \tab}
+\newcommand\sameas{\tab \equiv \tab}
+
+\title{CSC263 - Week 2, Lecture 2}
+\author{Cristyn Howard}
+\date{Friday, January 19, 2018}
+
+\begin{document}
+\maketitle
+
+\begin{itemize}
+\item All heaps must satisfy the \underline{heap order property}.
+	\begin{itemize}
+	\item in a MAX heap:	\tab values of children of node X are \emph{less than} or equal to the value of node X
+	\item in a MIN heap: \tab values of children of node X are \emph{greater than} or equal to the value of node X
+	\end{itemize}
+
+\item If there is one node (in a max heap) that violates the heap order property (i.e. it's children are larger than it), recursively compare the value of node X to the value of it's children and swap X with it's largest child until the heap order property is restored.
+
+\item \underline{Max-Heapify(A,i)}: subprocedure used in INSERT and EXTRACT
+	\begin{itemize}
+	\item \emph{Inputs:} array A, index in A
+	\item \emph{Pre-condition:} subtrees rooted at the left $\&$ right child of the node at i are heaps
+	\item \emph{Post-condition:} the subtree rooted at index i is a heap.
+	\item  \begin{tabular}{|l|}
+		\hline
+		MaxHeapify(A,i): \\
+ 		L = LEFT(i), R = RIGHT(i); \\
+ 		if L $\leq$ heapsize(A) and A[l] $>$ A[i] \\
+    		\tab	 largest = L \\
+    		else \\
+		\tab largest = i \\
+		 if R $\leq$ heapsize(A) and A[r] $>$ A[largest] \\
+     		\tab	largest = R \\
+ 		if largest $\neq$ i \\
+    		\tab swap(A[i],A[largest]) \\
+         	\tab	MaxHeapify(A,largest) \\
+		\hline
+		\end{tabular}
+	\item Max-Heapify $\in O(\log{n})$
+	\end{itemize}
+
+\item \underline{Build-Max-Heap}: 
+	\begin{itemize}
+	\item First, store elements in an array representing a complete binary tree.
+	\item Then, iterate from leaf to root performing MaxHeapify. Note that it is not necessary to perform MaxHeapify on leaf nodes, as they by definition preserve the heap order property and have no children to swap with. Because the last half of the nodes in an array are leaf nodes*, MaxHeapify is called starting from $\floor*{\frac{\abs{A}}{2}}$. 
+	\item Build-Max-Heap(A): for $i=\floor*{\frac{\abs{A}}{2}}$ to 1, MaxHeapify(A,i).
+	\item Intuitively, because Build-Max-Heap calls an $O(\log(n))$ function n times, it would be in $O(n\log(n))$, but it does not actually iterate through the whole height of the tree n times! \newpage
+	\item Proof that Build-Max-Heap is $\in O(n)$:
+		\begin{itemize}
+		\item each node at depth d has a height of at most $h-d \therefore$ the heapification cost of each node is at most $h-d$
+		\item $\therefore$ max heapification cost of each level $= 2^d(h-d)$
+		\item $\therefore$ max heapification cost of the whole tree $= \sum_{d=0}^{h-1}2^d(h-d)$
+		\item set $i=h-d,$ write $\sum_{i=1}^{h}2^{h-i}i = 2^h\sum_{i=1}^{h}\frac{i}{2^i} \leq (2^h)\sum_{i=1}^{\inf}\frac{i}{2^i} = (n)2$
+		\end{itemize}
+	\end{itemize}
+
+\item \underline{Deleting from Binary Search Trees}
+	\begin{itemize}
+	\item Case A: X has no children
+		\begin{itemize}
+		\item set parent's pointer to null, removed
+		\end{itemize}
+	\item Case B: X has one child
+		\begin{itemize}
+		\item set parent's pointer to X's child, removed
+		\end{itemize}
+	\item Case C: X has two children
+		\begin{itemize}
+		\item \underline{Successor(X)}: smallest node bigger than X, leftmost node in the right subtree of X
+		\item set x to value of it's successor, delete successor (reduces to case A or B)
+		
+		\end{itemize}
+	\end{itemize}
+\end{itemize}
+
+\end{document}

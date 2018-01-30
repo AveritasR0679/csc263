@@ -1,0 +1,76 @@
+\documentclass[12pt]{article} 
+\usepackage[letterpaper, margin=0.5in]{geometry}        		
+\geometry{letterpaper}
+\usepackage[parfill]{parskip} 
+\usepackage{framed}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{qtree}
+\usepackage{makecell}
+\usepackage{lmodern}
+\renewcommand*\familydefault{\sfdefault}
+\usepackage{tikz}
+\usetikzlibrary{matrix}
+
+\usepackage{mathtools}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}%
+\DeclarePairedDelimiter\norm{\lVert}{\rVert}%
+    % \abs & \norm resizes brackets, starred version doesn't
+    \makeatletter
+    \let\oldabs\abs
+    \def\abs{\@ifstar{\oldabs}{\oldabs*}}
+    %
+    \let\oldnorm\norm
+    \def\norm{\@ifstar{\oldnorm}{\oldnorm*}}
+    \makeatother
+
+\newcommand\graytag[1]{\text{\textsl{\color{gray}{#1}}}}
+\newcommand\tab[1][0.5cm]{\hspace*{#1}}
+\newcommand\imp{\rightarrow}
+\newcommand\thfr{\tab \therefore \tab}
+\newcommand\sameas{\tab \equiv \tab}
+
+\title{CSC263 - Week 3, Lecture 1}
+\author{Cristyn Howard}
+\date{Monday, January 22, 2018}
+
+\begin{document}
+\maketitle
+
+\begin{center}
+\begin{tabular}{|c|c| c |}
+\hline
+ADT & Operations & Data Structure 	\\
+\hline
+Dictionary & Insert, Delete, Search  & 
+\makecell[l]{BST\\Balanced Trees \{ 2-3 trees, B-trees, red-black trees, AVL trees \} } \\
+\hline
+\end{tabular}
+\end{center}
+\vspace{0.4cm}
+
+\underline{Problems with BSTs}...
+\begin{center}
+\begin{tabular}{ c c c c c }
+
+suppose we start with... & \Tree[.$(2)$ $(1)$ $(3)$ ] &
+and add $4, 5, 6...$ & \Tree[.$(2)$ [.$(1)$ ][.$(3)$ [.$(4)$ [.$(5)$ $(6)$ ]] ] ]
+\end{tabular}
+\end{center}
+
+Unbalanced trees such as the one above results in height $\in \Theta(n)$, ops  $\in \Theta(n)$. Today we will explore a new data structure, balanced trees. First, some definitions.
+
+\begin{itemize}
+\item Height(v): $\#$ of edges on the longest path from node v to a leaf
+\item BalanceFactor(v): Height(v.rightSubTree) $-$ Height(v.leftSubTree)
+\end{itemize}
+
+AVL $ $
+
+
+
+
+\end{document}
