@@ -1,0 +1,236 @@
+\documentclass[12pt, oneside]{article} 
+\usepackage[letterpaper, margin=0.5in]{geometry}        		
+\geometry{letterpaper}
+\usepackage[parfill]{parskip} 
+\usepackage{framed}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{qtree}
+\usepackage{makecell}
+
+\usepackage{mathtools}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}%
+\DeclarePairedDelimiter\norm{\lVert}{\rVert}%
+    % \abs & \norm resizes brackets, starred version doesn't
+    \makeatletter
+    \let\oldabs\abs
+    \def\abs{\@ifstar{\oldabs}{\oldabs*}}
+    %
+    \let\oldnorm\norm
+    \def\norm{\@ifstar{\oldnorm}{\oldnorm*}}
+    \makeatother
+    
+\newcommand\tab[1][0.25cm]{\hspace*{#1}}
+\newcommand\imp{\rightarrow}
+\newcommand\thfr{\tab \therefore \tab}
+\newcommand\sameas{\tab \equiv \tab}
+
+\title{CSC263 - Assignment 1}
+\author{Cristyn Howard}
+
+\begin{document}
+\maketitle
+
+\subsection*{Question 1:}
+
+\begin{itemize}
+\item After the $k^{th}$ iteration of the for-loop in lines 3-5 (hence referred to as "loop 3-5"), \emph{executed without returning on line 5}, we know that:
+	\begin{itemize}
+	\item $A[1] = -2k$, because:
+		\begin{itemize}
+		\item A[1] is initialized to 0 when line 1 executes
+		\item $A[1] = A[1]-2$ occurs every time line 4 is executed, which happens once per loop 3-5 iteration, or $k$ times for $k$ iterations
+		\end{itemize}
+	\item for $j \in \mathbb{Z},\tab	2 \leq j \leq k+1:\tab	A[j] = A[j-1]+1$
+		\begin{itemize}
+		\item on $k^{th}$ iteration loop 3-5 has executed with $i = \{2, 3, ..., k+1\}$
+		\item each iteration, line 5 executing without return shows that $A[i] = A[i-1]+1$
+		\item line 4 increasing $A[1]$ to $A[i-1]$ on future iterations does not alter this equality because $A[i] = A[i-1]+1 \imp A[i]+2x = A[i-1]+1+2x \tab \forall x \in \mathbb{Z}$
+		\end{itemize}
+	\item (i) \framebox{$\therefore \tab A[1:k+1] = [-2k, -2k+1, -2k+2, ..., -2k+(k-1), -2k+k]$}
+		\begin{itemize}
+		\item Notation: A[a:b] denotes a segment of A containing A[a], A[b], and all elements between them. 
+		\end{itemize}
+	\end{itemize}
+	
+\item Loop 3-5 starts with $i=2$ and goes to $i=n,\tab \therefore$ there are at most $n-1$ iterations of loop 3-5.
+
+\item From (i), we know that the input array B that does not return for all $n-1$ iterations looks like:
+	$$ B= B[1:n] = [-2(n-1), -2(n-1)+1, -2(n-1)+2, ..., -2(n-1)+((n-1)-1), -2(n-1)+(n-1)] $$
+	\begin{center} (ii) \framebox{$\therefore B = [-2n+2, -2n+3, -2n+4, ..., -n, -n+1] $} \end{center}
+	
+\item Given the original input $A = [a_1, a_2, a_3, ..., a_n]$, after the $k^{th}$ iteration of loop 3-5, we have:
+	\begin{center} (iii) \framebox{$ A = [-2k, a_2-2(k-1), a_3-2(k-2), ..., a_k-2, a_{k+1}, ..., a_n]$} \end{center}
+	\begin{itemize}
+	\item $j^{th}$ iteration of loop 3-5 decreases elements in A[1:j] by 2 on line 4
+	\item by $k^{th}$ iteration we have had each $j\in\mathbb{Z}, \tab 1\leq j \leq k$\tab exactly once
+	\end{itemize}
+	
+\item Then input A of size n that ran through all n-1 iterations of loop 3-5 without return, we know from (ii) and (iii) with $k = n-1$ that:
+	$$ [-2n+2, -2n+3, -2n+4, ..., -n, -n+1] \equiv [-2(n-1), a_2-2((n-1)-1), a_3-2((n-1)-2), ..., a_{n-1}-2, a_n]$$
+	\newpage
+	
+	This gives us $a_2 = -1,\tab a_3 = -2$, etc. Or more generally, $a_j  = 1-j \tab \forall$ valid indices j in A.
+
+\item So for input A of size n, the array $A = [x, -1, -2, -3, ... , -n+1]$ will run through loop 3-5 without triggering a return on line 5 for a total of n-1 iterations.
+	\begin{itemize}
+	\item Note: x is an arbitrary integer. $a_1$ is set to 0 in line 1, so the original input value of $a_1$ is irrelevant.
+	\end{itemize}
+
+\item Therefore, $\exists$ an input array A of size n $\forall n \in \mathbb{N}$ such that loop 3-5 runs $n-1$ times. \newline
+	On the $k^{th}$ call of loop 3-5, the for-loop in line 4 executes exactly k times, with each execution occuring in constant time.\newline
+	So $\exists$ input of size n $\forall n \in \mathbb{N}$ where the number of constant calls is:
+	$$\sum_{i=1}^{n-1} i = (\sum_{i=1}^{n} i )-n = \frac{n^2+n}{2}-n = \frac{n^2+n-2n}{2} = \frac{n^2-n}{2} \in \Theta(n^2)$$\newline
+	So $\exists$ input X of size n $\forall n \in \mathbb{N}$ such that $t(X) \in \Theta(n^2)$. $\thfr T(n) \in \Omega(n^2)$
+
+\item Loop 3-5 can run at most n-1 times on an input of size n. \newline
+	On $k^{th}$ iteration of loop 3-5, for-loop in line 4 executes exactly k times, thus loop 4 has at most n-1 iterations on a given call. \newline
+	So for arbitrary input X of size n $\forall n \in \mathbb{N}, \tab t(X) \leq c\cdot(n-1)(n-1) = c(n^2-2n+1) \in \Theta(n^2)$. \newline
+	$\thfr T(n) \in O(n^2)$
+\end{itemize}
+
+\subsection*{Question 2:}
+
+\begin{itemize}
+\item [a)] Nodes in a complete ternary tree are mapped one-to-one to the elements of an array in a top-to-bottom, left-to-right fashion. 
+	\begin{center}
+	\begin{tabular}{|p{20em}|p{20em}|}
+	\hline
+	Parent to child navigation: & Child to parent navigation: \\
+	\hline
+	$leftChildIndex = 3\cdot parentIndex - 1$ & $parentIndex = \floor{\frac{childIndex + 1}{3}}$ \\
+	$middleChildIndex = 3\cdot parentIndex$ & \\
+	$rightChildIndex = 3\cdot parentIndex + 1$ & \\
+	 \hline
+	\end{tabular}
+	\end{center}
+	
+\item [b) (1)] Note: Internal nodes refers to non-leaf nodes. \newline
+	Let height  of complete ternary tree (CTT) A, $ h_A = \floor{\log_{3}(Heapsize_A\cdot2)}$ (proven in part 2). \newline
+	Max number of leaf nodes in A$ = 3^{(h_A)}$. \newline
+	Max \# of nodes in A = $\sum_{i=0}^{h_A}3^i = \frac{3^{(h_A+1)}-1}{2}$. \newline
+	Then the number of non-leaf nodes in A is $ \frac{3^{(h_A+1)}-1}{2} - 3^{(h_A)}$.\newline
+	So in array A storing CTT, internal nodes are $A[i]$ for $i=1$ to $i=\frac{3^{(h_A+1)}-1}{2} - 3^{(h_A)}$.
+	
+\item [b) (2)] \underline{Assertion}: Height $h$ of complete ternary tree (CTT) = $\floor{\log_{3}(Heapsize\cdot2)}$ \newline
+	\underline{Proof}:
+	\begin{itemize}
+	\item maxNodes = Max \# of nodes of CTT of height h = $\sum_{i=0}^{h}3^i = \frac{3^{h+1}-1}{2}$
+	\item minNodes = Min \# nodes of CTT of height h = $[\sum_{i=0}^{h-1}3^i]+1 = \frac{3^{h}-1}{2}+1 = \frac{3^{h}+1}{2} $
+	\item minNodes $\leq$ Heapsize of array containing CTT of height h $\leq$ maxNodes
+	\item Must show that $\forall h \in \mathbb{N},\tab h=\floor{\log_{3}(minNodes\cdot2)}=\floor{\log_{3}(maxNodes\cdot2)}$ \newpage
+	\item	First we will show the equality holds with maxNodes:
+	$$ h=\floor{\log_{3}(maxNodes\cdot2)}=\floor{\log_{3}(\frac{3^{h+1}-1}{2}\cdot2)} = \floor{\log_{3}(3^{h+1}-1)}$$
+	$$ h \leq log_{3}(3^{h+1}-1) < h+1$$
+	$$ 3^h \leq 3^{h+1}-1 < 3^{h+1}  \tab\equiv\tab 3^h \leq 3\cdot 3^h-1 < 3\cdot 3^h$$
+	$$ 0 \leq 2\cdot 3^h-1 < 2\cdot 3^h $$
+	This equality holds $\forall h \in \mathbb{N}$, so we can conclude that $\forall h \in \mathbb{N},\tab h=\floor{\log_{3}(maxNodes\cdot2)}$.
+	\item Next, we will show the equality holds with minNodes:
+	$$ h=\floor{\log_{3}(minNodes\cdot2)}=\floor{\log_{3}(\frac{3^{h}+1}{2}\cdot2)}=\floor{\log_{3}(3^{h}+1)} $$
+	$$ h \leq log_{3}(3^{h}+1) < h+1 $$
+	$$ 3^h \leq 3^{h}+1 < 3^{h+1}  \tab\equiv\tab 3^h \leq  3^h+1 < 3\cdot 3^h$$
+	$$ 0 \leq 1< 2\cdot 3^h $$
+	This equality holds $\forall h \in \mathbb{N}$, so we can conclude that $\forall h \in \mathbb{N},\tab h=\floor{\log_{3}(minNodes\cdot2)}$.
+	\item Can conclude that given an array A storing a CTT, height of CTT $h = \floor{\log_{3}(Heapsize_A\cdot2)}$.
+	\end{itemize}
+
+\item [c) (i)]  
+	\tab[0.75cm]INSERT(A, x): 
+	\begin{itemize}
+	\item line 1 \tab	$A.Heapsize \: += 1;$ \tab\tab  (increase heapsize to make space for new element on end of array)\newline
+	line 2 \tab	$A[Heapsize] = x;$ \tab\tab\tab  (store x in new last element of A)\newline	
+	line 3 \tab myIndex = Heapsize; \newline
+	line 4 \tab	parentIndex = $\floor{\frac{myIndex+1}{3}}$; \newline
+	line 5 \tab	if $A[parentIndex] < A[myIndex]$: \newline
+	line 6 \tab[0.75cm]	swap elements at myIndex and parIndex; \newline
+	line 7 \tab[0.75cm]	myIndex = $\floor{\frac{myIndex+1}{3}}$; \newline
+	line 8 \tab[0.75cm]	go to line 4; \newline
+
+	\item What is the worst-case running time of Insert?
+		\begin{itemize}
+		\item lines 1-3 and lines 4-8 run in constant time
+		\item the block from 4-8 is called at most $(height-1)$ times
+		\item $(height-1) = \floor{\log_{3}(Heapsize_A\cdot2)} - 1 = \floor{\log_{3}(Heapsize_A)-\log_{3}2} - 1 \in \Theta(\log_3(x))$ 
+		\item given input A of size $n \tab \forall n \in \mathbb{N}, \tab t(A) \leq \floor{\log_{3}(Heapsize_A)-\log_{3}2} - 1 \in \Theta(\log_3(x))$
+		\item $ \thfr T(n) \in O(\log_{3}n)$
+		\item any input $x \geq A[1]$ requires full $(height-1)$ swaps
+		\item $\thfr \forall n \in \mathbb{N}, \: \exists$ input x that when inserted in array A of size n, requires $(height-1)$ swaps
+		\item $ \thfr T(n) \in \Omega(\log_{3}n)$
+		\item $T(n) \in O(\log_{3}n) \land T(n) \in \Omega(\log_{3}n) \imp T(n) \in \Theta(\log_{3}n)$
+		\end{itemize}
+	\end{itemize}
+	\newpage
+
+\item [c) (ii)]  
+	\tab[0.75cm]ExtractMax(A, x): 
+	\begin{itemize}
+	\item line 1 \tab	Swap first and last elements of array, return last as max. \newline
+	line 2 \tab	myIndex = 1;\newline	
+	line 3 \tab Get values stored in all three children elements of myIndex. \newline
+	line 4 \tab	if any child element value is larger than myIndex value: \newline
+	line 5 \tab[0.75cm]	swap myIndex value with largest child value \newline
+	line 6 \tab[0.75cm]	set myIndex to largest child's index \newline
+	line 7 \tab[0.75cm]	go to line 3; \newline
+	
+	\item What is the worst-case running time of ExtractMax?
+		\begin{itemize}
+		\item lines 1-2 and lines 3-7 run in constant time
+		\item the block from 3-7 is called at most $(height-1)$ times
+		\item $(height-1) = \floor{\log_{3}(Heapsize_A\cdot2)} - 1 = \floor{\log_{3}(Heapsize_A)-\log_{3}2} - 1 \in \Theta(\log_3(x))$ 
+		\item given input A of size $n \tab \forall n \in \mathbb{N}, \tab t(A) \leq \floor{\log_{3}(Heapsize_A)-\log_{3}2} - 1 \in \Theta(\log_3(x))$
+		\item $ \thfr T(n) \in O(\log_{3}n)$
+		\item any input A where the last element of A has the smallest key requires full $(height-1)$ swaps
+		\item $\thfr \forall n \in \mathbb{N}, \: \exists$ array A of size n for which ExtractMax requires $(height-1)$ swaps
+		\item $ \thfr T(n) \in \Omega(\log_{3}n)$
+		\item $T(n) \in O(\log_{3}n) \land T(n) \in \Omega(\log_{3}n) \imp T(n) \in \Theta(\log_{3}n)$
+		\end{itemize}
+	
+	\end{itemize}
+
+\item [c) (iii)]  
+	\tab[0.75cm]Update(A, i, key): 
+	\begin{itemize}
+	\item line 1 \tab	$A[i] = key;$\newline
+	line 2 \tab myIndex = i; \newline
+	line 3 \tab	get parentIndex of myIndex, if parent key larger: \newline	
+	line 4 \tab[0.75cm]  swap myIndex with parent, set myIndex=parentIndex, go to line 3; \newline
+	line 5 \tab	else get existing children, if any child element value is larger than myIndex value: \newline
+	line 6 \tab[0.75cm]	swap myIndex value with largest child value; \newline
+	line 7 \tab[0.75cm]	set myIndex to largest child's index; \newline
+	line 8 \tab[0.75cm]	go to line 5; \newline
+	
+	\item Can swap at most height-1 times, $\thfr T(n) \in O(\log_{3}n)$. \newline
+	Can update leaf node with value higher than root, will always require full height-1 swaps, $\thfr T(n) \in \Omega(\log_{3}n)$. \newline
+	$T(n) \in O(\log_{3}n) \land T(n) \in \Omega(\log_{3}n) \imp T(n) \in \Theta(\log_{3}n)$
+	
+	\end{itemize}
+	\newpage
+	
+\item [c) (iv)]  
+	\tab[0.75cm]Remove(A, i): 
+	\begin{itemize}
+	\item line 1 \tab	swap i and last element values, shrink array size by 1; \newline
+	line 2 \tab myIndex = i; \newline
+	line 3 \tab	get parentIndex of myIndex, if parent key larger: \newline	
+	line 4 \tab[0.75cm]  swap myIndex with parent, set myIndex=parentIndex, go to line 3; \newline
+	line 5 \tab	else get children of myIndex, if any child element value is larger than myIndex value: \newline
+	line 6 \tab[0.75cm]	swap myIndex value with largest child value; \newline
+	line 7 \tab[0.75cm]	set myIndex to largest child's index; \newline
+	line 8 \tab[0.75cm]	go to line 5; \newline
+	
+	\item Can swap at most height-1 times, $\thfr T(n) \in O(\log_{3}n)$. \newline
+	Removing root node from array where last element had the smallest key will always require full height-1 swaps (smallest key placed at root, pushed all the way back down to leaf node), $\thfr T(n) \in \Omega(\log_{3}n)$. \newline
+	$T(n) \in O(\log_{3}n) \land T(n) \in \Omega(\log_{3}n) \imp T(n) \in \Theta(\log_{3}n)$
+	
+	\end{itemize}
+	
+		
+	
+	
+\end{itemize}
+
+
+\end{document}

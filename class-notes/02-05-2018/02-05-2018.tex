@@ -1,0 +1,104 @@
+\documentclass[12pt]{article} 
+\usepackage[letterpaper, margin=0.5in]{geometry}        		
+\geometry{letterpaper}
+\usepackage[parfill]{parskip} 
+\usepackage{framed}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{qtree}
+\usepackage{makecell}
+\usepackage{lmodern}
+\renewcommand*\familydefault{\sfdefault}
+\usepackage{tikz}
+\usetikzlibrary{matrix}
+
+\usepackage{mathtools}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}%
+\DeclarePairedDelimiter\norm{\lVert}{\rVert}%
+    % \abs & \norm resizes brackets, starred version doesn't
+    \makeatletter
+    \let\oldabs\abs
+    \def\abs{\@ifstar{\oldabs}{\oldabs*}}
+    %
+    \let\oldnorm\norm
+    \def\norm{\@ifstar{\oldnorm}{\oldnorm*}}
+    \makeatother
+
+\newcommand\graytag[1]{\text{\textsl{\color{gray}{#1}}}}
+\newcommand\tab[1][0.4cm]{\hspace*{#1}}
+\newcommand\imp{\rightarrow}
+\newcommand\thfr{\tab \therefore \tab}
+\newcommand\sameas{\tab \equiv \tab}
+
+\renewcommand{\arraystretch}{1.5}
+
+\graphicspath{{../pdf/}{D:\Users\elizabethhoward\Documents\Courses\Current\csc263\extras\wk-2-binomial-heaps\figures}}
+
+\title{CSC263 - Week 5, Lecture 1}
+\author{Cristyn Howard}
+\date{Monday, February 5, 2018}
+
+\begin{document}
+\maketitle
+
+\texttt{Q: A webserver needs to reference a large list of blacklisted websites. The entire list cannot be stored in main memory, because it is too large. How can we store it? \\ \\
+	A: In a BLOOM FILTER}
+	
+\subsection*{Bloom Filters}
+
+\begin{itemize}
+\item probablistic (i.e. approximate) dictionary that stores $F_S:$ a summary/fingerprint of a dynamic set S
+	\begin{center}\graytag{
+	\begin{tabular}{r@{$\:\: : \:\:$}l}
+  	BF$[0, ..., m-1]$    & array of $m$ bits, initialized to $0$. \\
+  	$\{h_1, ..., h_t \}$  & set of $t<m$ hash fuctions where $h_i:U\rightarrow\{0, ..., m-1\}$     \\
+	$m, \:\: t$ & parameters defining $\#$ of bits $\&$ $\#$ of hash functions, respectively
+	\end{tabular}}
+	\end{center}
+	
+\item \underline{Operations}: 
+	\begin{itemize}
+	\item [\graytag{$\Theta(n)$}] INSERT($F_S\:, \: x$) $: $ \graytag{for $i$ from $1$ to $t, \: BF[h_i(x)]=1;$}
+		\begin{itemize}
+		\item element passed to all hash functions, produces a $t$-tuple of indices $\in \{0, ..., m-1\}$ that form fingerprint of $x$
+		\item bits at all indices in fingerprint of $x$ permanently set to $1$
+		\end{itemize}
+	\item  [\graytag{$\Theta(n)$}] SEARCH($F_S\:, \: x$) $: $ \graytag{for $i$ from $1$ to $t$, if (BF$[h_i(x)] == 0$) return FALSE, else return TRUE}
+		\begin{itemize}
+		\item Returns: $\{\text{FALSE}\equiv\text{x definitely not in }F_S\} 
+			||  \{\text{TRUE}\equiv\text{x \textbf{probably} in }F_S\}$
+		\item If any index in the hash of $x$ is $0$, then $x$ has definitely not been placed in $S$.
+		\item However, if $x$ is not in $S$, and the union of all indices in the hashes of all elements stored in $S$ contains all indices in the hash of $x$, then SEARCH will return a \textbf{false positive}.
+		\end{itemize}
+	\end{itemize}
+\item \underline{Benefits}: very space and time efficient way to store and search large sets.	
+\item \underline{Limitations}: 
+	\begin{itemize}
+	\item cannot delete elements from S
+	\item SEARCH may return \emph{false positives} - may say that $x$ is likely in $S$ when it is not.
+	\end{itemize}
+\item \underline{Use when}: space constraints exist, false positives are acceptable, and when deleting is not necessary.
+\end{itemize}
+\newpage \color{white}{.} \color{black} 
+
+\subsubsection*{False Positive Probability Analysis}
+
+Assume $n$ elements inserted. Compute probability that SEARCH(BF, x) returns a false positive, i.e. a positive when x has not been inserted.
+
+Recall that hash functions have uniform, independent probability distributions.
+
+
+
+
+
+% TODO : FINISH INCOMPLETE NOTE TYPESETTING %
+
+
+
+
+
+
+\end{document}
