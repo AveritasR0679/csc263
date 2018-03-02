@@ -1,0 +1,93 @@
+\documentclass[11pt]{article} 
+\usepackage[letterpaper, margin=0.5in]{geometry}        		
+\geometry{letterpaper}
+\usepackage[parfill]{parskip} 
+\usepackage{framed}
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{qtree}
+\usepackage{makecell}
+\usepackage{lmodern}
+\renewcommand*\familydefault{\sfdefault}
+\usepackage{tikz}
+\usetikzlibrary{matrix}
+
+\usepackage{mathtools}
+\DeclarePairedDelimiter\ceil{\lceil}{\rceil}
+\DeclarePairedDelimiter\floor{\lfloor}{\rfloor}
+\DeclarePairedDelimiter\abs{\lvert}{\rvert}%
+\DeclarePairedDelimiter\norm{\lVert}{\rVert}%
+    % \abs & \norm resizes brackets, starred version doesn't
+    \makeatletter
+    \let\oldabs\abs
+    \def\abs{\@ifstar{\oldabs}{\oldabs*}}
+    %
+    \let\oldnorm\norm
+    \def\norm{\@ifstar{\oldnorm}{\oldnorm*}}
+    \makeatother
+
+\newcommand\graytag[1]{\text{\textsl{\color{gray}{#1}}}}
+\newcommand\tab[1][0.5cm]{\hspace*{#1}}
+\newcommand\imp{\rightarrow}
+\newcommand\thfr{\tab \therefore \tab}
+\newcommand\sameas{\tab \equiv \tab}
+
+\graphicspath{{../pdf/}{D:\Users\elizabethhoward\Documents\Courses\Current\csc263\extras\wk-2-binomial-heaps\figures}}
+
+\title{CSC263 - Assignment 2}
+\author{Cristyn Howard}
+\date{Monday, January 29, 2018}
+
+\begin{document}
+\maketitle
+
+\subsection*{Question 1}
+\subsubsection*{Part a)}
+\begin{itemize}
+\item Let $\alpha(n)$ denote the number of $1$'s in the binary representation of n.
+\item \underline{Lemma}: based on the structural definition of binary forests, a binary forest with $n$ nodes contains $\alpha(n)$ trees.
+\item \underline{Lemma}: a tree with $n$ nodes contains $n-1$ edges.
+\item Let the trees in a binary heap with $n$ nodes be labelled $G_i$, where $1 \leq i \leq \alpha(n)$, and let  $k_i$ denote the number of nodes in tree $G_i$.
+\item We know that $\sum_{i=1}^{\alpha(n)}k_i = n$, so then $\sum_{i=1}^{\alpha(n)} (ki-1) = n - \alpha(n)$.
+\item Thus we can conclude that a binary heap with $n$ nodes contains $ n - \alpha(n)$ edges.
+\end{itemize}
+
+\subsubsection*{Part b)}
+\begin{itemize}
+\item Binomial heap H has $n$ nodes and $n-\alpha(n)$ edges before any insertions.
+\item After $k$ insertions, H has $n+k$ nodes and $(n+k)-\alpha(n+k)$ edges.
+\item The number of edges created by $k$ insertions is thus $[(n+k)-\alpha(n+k)] - [n-\alpha(n)] = n+k-\alpha(n+k)-n+\alpha(n) = k + \alpha(n) - \alpha(n+k)$.
+	\begin{itemize}
+	\item Note that $\alpha(n+k)\geq 0$, and so $k + \alpha(n) - \alpha(n+k) \leq k + \alpha(n)$.
+	\item Further, note that $\alpha(n) \leq \floor{\log_{2}{n}}+1$ (by the definition of $\alpha(n)$).
+	\item So all together we have $k + \alpha(n) - \alpha(n+k) \leq k+ \floor{\log_{2}{n}}+1$.
+	
+	\end{itemize}
+\item Pairwise comparisons between node values (which occur in constant time) take place whenever an insertion of an element into H creates a new edge, as the newly connected nodes must be compared and potentially swapped to preserve the heap order property. 
+\item The dominant factor affecting the worst case running time of inserting $k$ elements into H is the number of comparisons that must occur, or the number of edges that must be created, which we know is bounded above by $k+ \floor{\log_{2}{n}}+1$.
+\item When $k<\log_{2}{n}$, the dominant term in $[k+ \floor{\log_{2}{n}}+1]$ is $\log_{2}{n}$, so the worst case running cost of inserting $k$ elements into H is $O(\log_{2}{n})$.
+\item However when $k>\log_{2}{n}$, the dominant term in $[k+ \floor{\log_{2}{n}}+1]$ is $k$, so the worst case running cost of inserting $k$ elements into H is $O(k)$, and the average cost of inserting $1$ element is $O(k/k)$, or $O(1)$.
+\end{itemize}
+
+\subsection*{Question 2}
+\begin{center}
+\includegraphics[totalheight=15cm]{pseudocode-wide.png}
+\end{center}
+
+\begin{itemize}
+\item The wrapper function contains only constant time operations (besides the call to check-bal).
+\item Base case inputs to check-bal that trigger no recursive calls ($x=$ leaf, $x=$ NIL) contain only constant time operations.
+\item In non-base cases (when $x$ has at least one child), all operations that are not recursive calls (evaluating if conditions, doing arithmetic operations, executing return statements) occur in constant time.
+\item Then the dominant factor in the running time is the number of recursive calls.
+\item Whenever $x$ has one child, check-bal is called on that child, and whenever $x$ has two children, check-bal is structured to call on both of them. So check-bal is structured to call recursively on all nodes of the subtree rooted at $x$. 
+\item When $x$ is the root of a 2-balanced BST (no recursive calls to check-bal return FALSE), we know that check-bal is called recursively \underline{on all nodes} of the BST, thus there exists an input $\forall n \in \mathbb{N}$ where check-bal is called $n$ times. So $T \in \Omega(n)$.
+\item Check-bal is called \underline{at most} once per node, therefore the maximum number of check-bal calls for a BST of size $n \in \mathbb{N}$ is $n$. So $T \in O(n)$.
+\item Thus the worst case running time of this algorithm is $\Theta(n)$, where $n$ is the $\#$ of nodes in the BST rooted at $u$.
+
+
+\end{itemize}
+
+\newpage
+
+\end{document}
