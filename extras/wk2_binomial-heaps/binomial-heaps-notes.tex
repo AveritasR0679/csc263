@@ -107,11 +107,11 @@ You can also think of a $B_k$ tree as a collection of $\{B_{k-1}, B_{k-2}, ... ,
 		\begin{itemize}
 		\item [-]\emph{Consider that the number of nodes in the subtree rooted at x decreases by half every time we jump to the leftmost child of x.}
 		\end{itemize}
+	\item $\text{degree}(x) : \text{number of children of } x \equiv \#$ of edges on the longest path between x and a leaf
 
 	\end{enumerate}
 \vspace{0.5cm}
 
-Note: the \textbf{degree} of node x the number of children it has. It is equivalent to the number of edges on the longest path between it and a leaf.
 
 A \textbf{binomial heap} is a binomial forest, a collection of binomial trees, that satisfies the binomial heap properties:
 	\begin{itemize}
